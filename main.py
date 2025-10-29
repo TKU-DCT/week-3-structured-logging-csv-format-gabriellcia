@@ -6,19 +6,22 @@ import os
 def get_system_info():
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
-    # TODO: Use psutil to get CPU, memory, and disk usage
-    cpu = 
-    memory = 
-    disk = 
+    cpu = psutil.cpu_percent(interval=1) 
+    memory = psutil.virtual_memory().percent
+    disk = psutil.disk_usage("/").percent 
     
     return [now, cpu, memory, disk]
 
 def write_log(data):
-    # TODO: Check if log.csv exists
-    # If not, create it and write a header row
-    # Then append the current data row
-    pass
+    filename = "log.csv"
+    file_exists = os.path.isfile(filename)
 
+    with open(filename, mode="a", newline="") as f:
+        writer = csv.writer(f)
+        if (not file_exists) or os.stat(filename).st_size == 0:
+            writer.writerow(["Timestamp", "CPU", "Memory", "Disk"])
+        writer.writerow(data)
+        
 if __name__ == "__main__":
     row = get_system_info()
     write_log(row)
